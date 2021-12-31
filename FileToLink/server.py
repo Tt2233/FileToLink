@@ -1,5 +1,4 @@
 from asyncio import get_event_loop
-from urllib.parse import unquote
 import os
 
 from pyrogram.errors import MessageIdInvalid
@@ -62,8 +61,9 @@ async def root():
     return redirect(f"https://t.me/{Config.Bot_UserName}")
 
 
-@app.route('/dl/<int:archive_id>/<name>')
-async def download(archive_id: int, name: str):
+@app.route('/dl/<archive_id>')
+async def download(archive_id: str):
+    archive_id = int(archive_id.split(".")[0])
     worker: Worker = AllWorkers.get(archive_id=archive_id)
     if worker is None:
         try:
@@ -73,8 +73,7 @@ async def download(archive_id: int, name: str):
             NotFound.append(archive_id)
             return abort(404)  # Not Found
 
-    name = unquote(name)
-    if name != worker.name or not os.path.isfile(worker.path):
+    if not os.path.isfile(worker.path):
         abort(404)  # Not Found
 
     response = await send_file(worker.path, mimetype=worker.mime_type,

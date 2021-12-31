@@ -1,6 +1,5 @@
 from asyncio import sleep
 from pathlib import Path
-from urllib.parse import quote
 import aiofiles
 import os
 
@@ -40,12 +39,16 @@ class Worker:
             self.name = self.media.file_name.split('\n')[0].replace("/", "|")
             if self.name.find('.') == -1 and extension:
                 self.name += f'.{extension}'
+            else:
+                extension = self.name.split(".")[-1]
         elif self.msg.photo:
             self.name = f'{self.id}.{extension}'
         else:
             self.name = self.id + (f".{extension}" if extension else '')
 
         self.link = f'{Config.Link_Root}dl/{self.archive_id}'
+        if extension:
+            self.link += f".{extension}"
 
         if self.mime_type:
             self.stream = (bool(self.mime_type.split('/')[0] in ('video', 'audio')) or
