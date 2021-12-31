@@ -45,7 +45,7 @@ class Worker:
         else:
             self.name = self.id + (f".{extension}" if extension else '')
 
-        self.link = f'{Config.Link_Root}dl/{self.archive_id}/{quote(self.name)}'
+        self.link = f'{Config.Link_Root}dl/{self.archive_id}'
 
         if self.mime_type:
             self.stream = (bool(self.mime_type.split('/')[0] in ('video', 'audio')) or
